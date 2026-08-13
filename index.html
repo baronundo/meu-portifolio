@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nicolas Baron | Desenvolvedor Full Stack</title>
+  <meta name="description" content="Portfólio profissional de Nicolas Baron, Desenvolvedor Full Stack. Projetos, competências e experiência em desenvolvimento web.">
+  <meta name="keywords" content="desenvolvedor full stack, portfólio, javascript, react, node.js, python">
+  <meta name="author" content="Nicolas Baron">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Nicolas Baron | Desenvolvedor Full Stack">
+  <meta property="og:description" content="Portfólio profissional com projetos, competências e experiência em desenvolvimento web.">
+  <meta property="og:image" content="assets/images/og-cover.jpg">
+  <meta property="og:url" content="https://seudominio.com">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Leaflet (mapa) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Cursor personalizado -->
+  <div class="cursor" aria-hidden="true"></div>
+  <div class="cursor-follower" aria-hidden="true"></div>
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader__logo">BRN</div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar" id="navbar">
+    <nav class="navbar__container">
+      <a href="#hero" class="navbar__logo" data-page="home">Baro<span>Nego</span></a>
+
+      <ul class="navbar__links" id="navLinks">
+        <li><a href="#hero" class="nav-link" data-page="home">Início</a></li>
+        <li><a href="#mapa" class="nav-link" data-page="mapa">Mapa</a></li>
+        <li><a href="#projetos" class="nav-link" data-page="projetos">Projetos</a></li>
+        <li><a href="#servicos" class="nav-link" data-page="servicos">Serviços</a></li>
+        <li><a href="#competencias" class="nav-link" data-page="competencias">Habilidades</a></li>
+        <li><a href="#contato" class="nav-link" data-page="contato">Contato</a></li>
+        <li><a href="#pergunte" class="nav-link" data-page="pergunte">Pergunte sobre mim</a></li>
+      </ul>
+
+      <div class="navbar__auth is-checking" id="navbarAuth">
+        <button class="btn btn--outline btn--sm" id="authOpenBtn" type="button">Entrar</button>
+
+        <div class="navbar__user is-hidden" id="navbarUser">
+          <span class="navbar__user-name" id="navbarUserName"></span>
+          <button class="btn btn--outline btn--sm" id="logoutBtn" type="button">Sair</button>
+        </div>
+      </div>
+
+      <button class="navbar__toggle" id="navToggle" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="navLinks">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- MODAL DE AUTENTICAÇÃO -->
+  <div class="auth-modal" id="authModal" aria-hidden="true">
+    <div class="auth-modal__backdrop" id="authBackdrop"></div>
+
+    <div class="auth-modal__box glass" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <button class="auth-modal__close" id="authCloseBtn" aria-label="Fechar">&times;</button>
+
+      <div class="auth-modal__tabs" role="tablist">
+        <button class="auth-tab is-active" id="tabLogin" data-view="login" role="tab" aria-selected="true">Entrar</button>
+        <button class="auth-tab" id="tabSignup" data-view="signup" role="tab" aria-selected="false">Criar conta</button>
+      </div>
+
+      <!-- LOGIN -->
+      <form class="auth-form is-active" id="loginForm" data-view="login" novalidate>
+        <h2 class="auth-form__title" id="authModalTitle">Seja Bem-vindo de volta!</h2>
+
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" name="email" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Senha</label>
+          <input type="password" id="loginPassword" name="password" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full">Entrar</button>
+
+        <button type="button" class="auth-form__link" id="forgotPasswordLink">Esqueci minha senha</button>
+
+        <p class="form-feedback" id="loginFeedback" role="status" aria-live="polite"></p>
+
+        <button type="button" class="auth-form__continue" id="continueWithoutLoginBtn">Continuar sem login</button>
+      </form>
+
+      <!-- CADASTRO -->
+      <form class="auth-form" id="signupForm" data-view="signup" novalidate>
+        <h2 class="auth-form__title">Criar conta</h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="signupNome">Nome</label>
+            <input type="text" id="signupNome" name="nome" required autocomplete="given-name">
+          </div>
+          <div class="form-group">
+            <label for="signupSobrenome">Sobrenome</label>
+            <input type="text" id="signupSobrenome" name="sobrenome" required autocomplete="family-name">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="signupTelefone">Telefone</label>
+          <input type="tel" id="signupTelefone" name="telefone" placeholder="(00) 00000-0000" required autocomplete="tel">
+        </div>
+
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" name="email" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Senha</label>
+          <input type="password" id="signupPassword" name="password" required autocomplete="new-password">
+          <span class="form-hint">Mínimo de 8 caracteres, com letras e números.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="signupPasswordConfirm">Confirmar senha</label>
+          <input type="password" id="signupPasswordConfirm" name="passwordConfirm" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full">Criar conta</button>
+
+        <p class="form-feedback" id="signupFeedback" role="status" aria-live="polite"></p>
+
+        <button type="button" class="auth-form__continue" id="continueWithoutLoginBtn2">Continuar sem login</button>
+      </form>
+
+      <!-- RECUPERAÇÃO DE SENHA -->
+      <form class="auth-form" id="forgotForm" data-view="forgot" novalidate>
+        <h2 class="auth-form__title">Recuperar senha</h2>
+        <p class="auth-form__desc">Informe seu email e enviaremos um link para redefinir sua senha.</p>
+
+        <div class="form-group">
+          <label for="forgotEmail">Email</label>
+          <input type="email" id="forgotEmail" name="email" required autocomplete="email">
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full">Enviar link</button>
+
+        <button type="button" class="auth-form__link" id="backToLoginLink">Voltar para o login</button>
+
+        <p class="form-feedback" id="forgotFeedback" role="status" aria-live="polite"></p>
+      </form>
+
+      <!-- NOVA SENHA (após clicar no link de recuperação) -->
+      <form class="auth-form" id="resetPasswordForm" data-view="reset" novalidate>
+        <h2 class="auth-form__title">Defina sua nova senha</h2>
+        <p class="auth-form__desc">Você chegou aqui pelo link de recuperação. Escolha uma nova senha para sua conta.</p>
+
+        <div class="form-group">
+          <label for="resetPassword">Nova senha</label>
+          <input type="password" id="resetPassword" name="password" required autocomplete="new-password">
+          <span class="form-hint">Mínimo de 8 caracteres, com letras e números.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="resetPasswordConfirm">Confirmar nova senha</label>
+          <input type="password" id="resetPasswordConfirm" name="passwordConfirm" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full">Salvar nova senha</button>
+
+        <p class="form-feedback" id="resetFeedback" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <main id="main-content">
+
+    <div class="view is-active" id="view-home">
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+      <canvas id="particles-canvas" class="hero__particles" aria-hidden="true"></canvas>
+
+      <div class="hero__content">
+        <div class="hero__photo-wrapper">
+          <img src="assets/images/perfil.jpg" class="hero__photo" width="220" height="220" loading="eager">
+        </div>
+
+        <p class="hero__greeting">Olá. Seja muito bem-vindo! Eu sou o</p>
+        <h1 class="hero__name">Nicolas Baron</h1>
+        <h2 class="hero__role">
+          <span id="typing-text"></span><span class="typing-cursor" aria-hidden="true">|</span>
+        </h2>
+        <p class="hero__description">
+          Desenvolvedor Full Stack focado em criar soluções web modernas, escaláveis e com excelente
+          experiência do usuário, do back-end à interface final.
+        </p>
+
+        <div class="hero__actions">
+          <a href="assets/pdf/curriculo.pdf" class="btn btn--primary" download>
+            Download CV
+          </a>
+          <a href="#contato" class="btn btn--outline" data-page="contato">
+            Contato
+          </a>
+        </div>
+
+          <div class="hero__socials">
+          <a href="https://github.com/baronundo" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.93c.57.1.79-.25.79-.55v-2.1c-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.18-1.18 3.18-1.18.63 1.58.23 2.75.12 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.08.78 2.17v3.22c0 .3.21.66.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/nicolas-baron-a876b341a" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+          </a>
+          <a href="mailto:nicolasbb157@gmail.com" aria-label="Email" class="social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M2 4h20v16H2V4zm2 2v.01L12 12l8-5.99V6H4zm16 12V8.24l-8 6-8-6V18h16z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <a href="#sobre" class="hero__scroll-indicator" aria-label="Rolar para a próxima seção">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- SOBRE MIM -->
+    <section class="about" id="sobre">
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Sobre mim</p>
+        <h2 class="section__title">Minha trajetória</h2>
+      </div>
+
+            <div class="about__content">
+        <div class="about__image-wrapper" data-reveal>
+          <img src="assets/images/IMG_0280.jpg" alt="Nicolas Baron trabalhando" class="about__image" loading="lazy" width="480" height="560">
+        </div>
+
+        <div class="about__text" data-reveal>
+          <p>
+           Sou formado em Análise e Desenvolvimento de Sistemas pela Universidade Nove de
+            Julho, com forte interesse em desenvolvimento de software, desenvolvimento web,
+            infraestrutura e design. Ao longo das minhas graduações, adquiri conhecimentos em
+            programação, bancos de dados, APIs, DevOps, computação gráfica, resolução de
+            problemas e entre outros, desenvolvi projetos que fortaleceram as minhas técnicas e
+            habilidades. Tenho facilidade em aprender e me adaptar rapidamente a novas
+            tecnologias e ferramentas.
+          </p>
+    
+          <ul class="about__info-list">
+            <li><strong>Nome:</strong> Nicolas Baron de Paula da Rocha</li>
+            <li><strong>Localização:</strong> Franco da Rocha, São Paulo</li>
+            <li><strong>Disponibilidade:</strong> Remoto / Híbrido</li>
+            <li><strong>Email:</strong> nicolasbb157@gmail.com</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMAÇÃO (agora dentro da Home) -->
+    <section class="education" id="formacao">
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Formação</p>
+        <h2 class="section__title">Estudos e certificações</h2>
+      </div>
+
+      <!--
+        Itens da timeline gerados pelo JavaScript (veja "educationData" em
+        js/script.js). Para adicionar uma faculdade, curso ou certificação,
+        edite apenas aquele array.
+      -->
+      <div class="timeline" id="educationTimeline"></div>
+    </section>
+
+    <!-- EXPERIÊNCIA (agora dentro da Home) -->
+    <section class="experience" id="experiencias">
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Experiência</p>
+        <h2 class="section__title">Trajetória profissional</h2>
+      </div>
+
+      <div class="timeline timeline--experience" id="experienceTimeline">
+        <!-- Vazio inicialmente, conforme solicitado -->
+        <p class="experience__empty" data-reveal>
+          Experiências profissionais serão adicionadas em breve.
+        </p>
+      </div>
+    </section>
+
+    <!-- ESTATÍSTICAS (agora dentro da Home) -->
+    <section class="stats" id="estatisticas">
+      <div class="stats__grid">
+        <div class="stat-item" data-reveal>
+          <span class="stat-item__number" data-count="20">0</span>
+          <span class="stat-item__label">Projetos</span>
+        </div>
+        <div class="stat-item" data-reveal>
+          <span class="stat-item__number" data-count="15">0</span>
+          <span class="stat-item__label">Tecnologias</span>
+        </div>
+        <div class="stat-item" data-reveal>
+          <span class="stat-item__number" data-count="8">0</span>
+          <span class="stat-item__label">Cursos</span>
+        </div>
+        <div class="stat-item" data-reveal>
+          <span class="stat-item__number" data-count="3">0</span>
+          <span class="stat-item__label">Anos estudando</span>
+        </div>
+      </div>
+    </section>
+
+    </div>
+    <!-- fim da view home -->
+
+    <!-- COMPETÊNCIAS -->
+    <div class="view" id="view-competencias">
+    <section class="skills" id="competencias">
+      <a href="#hero" class="view-back" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Voltar para início
+      </a>
+
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Competências</p>
+        <h2 class="section__title">Tecnologias e ferramentas</h2>
+      </div>
+
+      <!--
+        Os cards de competência são gerados pelo JavaScript (veja "skillsData"
+        no topo de js/script.js). Para adicionar, editar ou remover uma
+        competência, mexa APENAS naquele array — o HTML e o layout aqui
+        se ajustam sozinhos, sem risco de sair do enquadramento.
+      -->
+      <div class="skills__grid" id="skillsGrid"></div>
+    </section>
+    </div>
+
+    <!-- PROJETOS -->
+    <div class="view" id="view-projetos">
+    <section class="projects" id="projetos">
+      <a href="#hero" class="view-back" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Voltar para início
+      </a>
+
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Projetos</p>
+        <h2 class="section__title">Trabalhos recentes</h2>
+      </div>
+
+      <div class="projects__filters" data-reveal role="group" aria-label="Filtrar projetos por tecnologia">
+        <button class="filter-btn is-active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="javascript">JavaScript</button>
+        <button class="filter-btn" data-filter="react">React</button>
+        <button class="filter-btn" data-filter="node">Node.js</button>
+        <button class="filter-btn" data-filter="python">Python</button>
+      </div>
+
+      <div class="projects__grid" id="projectsGrid">
+        <article class="project-card" data-reveal data-tech="javascript">
+          <div class="project-card__image-wrapper">
+            <img src="assets/images/project-1.jpg" alt="Em breve" class="project-card__image" loading="lazy" width="400" height="260">
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--sm btn--primary" target="_blank" rel="noopener noreferrer">Ver Projeto</a>
+              <a href="#" class="btn btn--sm btn--outline" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </div>
+          <div class="project-card__body">
+            <h3 class="project-card__title">Em breve</h3>
+            <p class="project-card__desc">Em breve</p>
+            <div class="project-card__tags">
+              <span class="tag">JavaScript</span>
+              <span class="tag">CSS</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card" data-reveal data-tech="react node">
+          <div class="project-card__image-wrapper">
+            <img src="assets/images/project-2.jpg" alt="Em breve" class="project-card__image" loading="lazy" width="400" height="260">
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--sm btn--primary" target="_blank" rel="noopener noreferrer">Ver Projeto</a>
+              <a href="#" class="btn btn--sm btn--outline" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </div>
+          <div class="project-card__body">
+            <h3 class="project-card__title">Em breve</h3>
+            <p class="project-card__desc">Em breve</p>
+            <div class="project-card__tags">
+              <span class="tag">React</span>
+              <span class="tag">Node.js</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card" data-reveal data-tech="python">
+          <div class="project-card__image-wrapper">
+            <img src="assets/images/project-3.jpg" alt="Em breve" class="project-card__image" loading="lazy" width="400" height="260">
+            <div class="project-card__overlay">
+              <a href="#" class="btn btn--sm btn--primary" target="_blank" rel="noopener noreferrer">Ver Projeto</a>
+              <a href="#" class="btn btn--sm btn--outline" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+          </div>
+          <div class="project-card__body">
+            <h3 class="project-card__title">Em breve</h3>
+            <p class="project-card__desc">Em breve</p>
+            <div class="project-card__tags">
+              <span class="tag">Python</span>
+              <span class="tag">SQL</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+    </div>
+
+    <!-- EXPERIÊNCIA: movido para a Home -->
+
+    <!-- SERVIÇOS -->
+    <div class="view" id="view-servicos">
+    <section class="services" id="servicos">
+      <a href="#hero" class="view-back" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Voltar para início
+      </a>
+
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Serviços</p>
+        <h2 class="section__title">O que eu posso fazer por você</h2>
+      </div>
+
+      <div class="services__grid">
+        <article class="service-card" data-reveal>
+          <div class="service-card__icon"><!-- ícone --></div>
+          <h3 class="service-card__title">Desenvolvimento Web</h3>
+          <p class="service-card__desc">Criação de sites e sistemas web completos, do back-end à interface.</p>
+        </article>
+
+        <article class="service-card" data-reveal>
+          <div class="service-card__icon"><!-- ícone --></div>
+          <h3 class="service-card__title">Design Gráfico</h3>
+          <p class="service-card__desc">Peças visuais e materiais gráficos para marcas e produtos digitais.</p>
+        </article>
+
+        <article class="service-card" data-reveal>
+          <div class="service-card__icon"><!-- ícone --></div>
+          <h3 class="service-card__title">Identidade Visual</h3>
+          <p class="service-card__desc">Criação de identidade de marca consistente e memorável.</p>
+        </article>
+
+        <article class="service-card" data-reveal>
+          <div class="service-card__icon"><!-- ícone --></div>
+          <h3 class="service-card__title">Automações</h3>
+          <p class="service-card__desc">Scripts e integrações que automatizam processos e economizam tempo.</p>
+        </article>
+      </div>
+    </section>
+    </div>
+
+    <!-- PERGUNTE SOBRE MIM -->
+    <div class="view" id="view-pergunte">
+    <section class="ask-me" id="pergunte">
+      <a href="#hero" class="view-back" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Voltar para início
+      </a>
+
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Pergunte sobre mim</p>
+        <h2 class="section__title">Converse com meu assistente</h2>
+        <p class="ask-me__subtitle">
+          Faça uma pergunta sobre a minha formação, projetos ou tecnologias, meu assistente IA responde
+          com base nas informações que eu mesmo forneci.
+        </p>
+      </div>
+
+      <div class="ask-me__container glass" data-reveal>
+        <div class="ask-me__suggestions" id="chatSuggestions">
+          <button type="button" class="chat-suggestion">Qual é a formação dele?</button>
+          <button type="button" class="chat-suggestion">Quais tecnologias ele conhece?</button>
+          <button type="button" class="chat-suggestion">Quais projetos ele desenvolveu?</button>
+          <button type="button" class="chat-suggestion">Ele conhece AWS?</button>
+        </div>
+
+        <div class="ask-me__messages" id="chatMessages" role="log" aria-live="polite" aria-label="Conversa com o assistente">
+          <div class="chat-message chat-message--bot">
+            <div class="chat-message__bubble">
+              Olá! Pode me perguntar sobre formação, projetos, tecnologias ou experiência. Vou responder com base
+              nas informações que tenho sobre o meu chefe.
+            </div>
+          </div>
+        </div>
+
+        <div class="ask-me__typing is-hidden" id="chatTyping" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+
+        <p class="ask-me__error" id="chatError" role="alert"></p>
+
+        <form class="ask-me__form" id="chatForm" novalidate>
+          <label for="chatInput" class="sr-only">Sua pergunta</label>
+          <input
+            type="text"
+            id="chatInput"
+            name="question"
+            placeholder="Ex: Quais são as principais habilidades dele?"
+            autocomplete="off"
+            maxlength="300"
+            required>
+          <button type="submit" class="btn btn--primary" id="chatSendBtn">Enviar</button>
+        </form>
+
+        <button type="button" class="ask-me__clear" id="chatClearBtn">Limpar conversa</button>
+      </div>
+    </section>
+    </div>
+
+    <!-- ESTATÍSTICAS: movido para a Home -->
+
+    <!-- MAPA -->
+    <div class="view" id="view-mapa">
+    <section class="map-section" id="mapa">
+      <a href="#hero" class="view-back" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Voltar para início
+      </a>
+
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Mapa</p>
+        <h2 class="section__title">Minha localização</h2>
+      </div>
+
+      <div class="contact__map-wrapper" data-reveal>
+        <div class="geo-banner" id="geoBanner" role="region" aria-label="Permissão de localização">
+          <p class="geo-banner__text">
+            Permitir acesso à sua localização? Podemos utilizar sua localização para mostrar sua posição no mapa.
+          </p>
+          <div class="geo-banner__actions">
+            <button type="button" class="btn btn--sm btn--primary" id="geoAllowBtn">Permitir localização</button>
+            <button type="button" class="btn btn--sm btn--outline" id="geoDenyBtn">Continuar sem localização</button>
+          </div>
+        </div>
+
+        <div class="contact__map" id="map" aria-label="Mapa de localização"></div>
+
+        <br><button type="button" class="map-locate-btn" id="locateBtn" aria-label="Minha localização">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+          </svg>
+          Minha localização
+        </button><br>
+
+        <p class="map-feedback" id="mapFeedback" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+    </div>
+
+    <!-- CONTATO -->
+    <div class="view" id="view-contato">
+    <section class="contact" id="contato">
+      <a href="#hero" class="view-back" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Voltar para início
+      </a>
+
+      <div class="section__header" data-reveal>
+        <p class="section__eyebrow">Contato</p>
+        <h2 class="section__title">Vamos conversar</h2>
+      </div>
+
+      <form class="contact__form" id="contactForm" data-reveal novalidate>
+        <div class="form-group">
+          <label for="name">Nome</label>
+          <input type="text" id="name" name="name" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="message">Mensagem</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full">Enviar</button>
+
+        <p class="form-feedback" id="formFeedback" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+    </div>
+
+  </main>
+
+
+  <!-- RODAPÉ -->
+  <footer class="footer">
+    <div class="footer__content">
+      <a href="#hero" class="footer__logo" data-page="home">Baro<span>Nego</span></a>
+
+      <ul class="footer__links">
+        <li><a href="#sobre" data-page="home" data-scroll-to="sobre">Sobre</a></li>
+        <li><a href="#projetos" data-page="projetos">Projetos</a></li>
+        <li><a href="#servicos" data-page="servicos">Serviços</a></li>
+        <li><a href="#mapa" data-page="mapa">Mapa</a></li>
+        <li><a href="#contato" data-page="contato">Contato</a></li>
+      </ul>
+
+    <div class="footer__socials">
+        <a href="https://github.com/baronundo" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+        <a href="https://www.linkedin.com/in/nicolas-baron-a876b341a" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+        <a href="mailto:nicolasbb157@gmail.com" aria-label="Email">Email</a>
+      </div>
+    </div>
+
+    <p class="footer__copyright">&copy; 2026 Nicolas Baron. Todos os direitos reservados.</p>
+  </footer>
+
+  <!-- Botão voltar ao topo -->
+  <button class="back-to-top" id="backToTop" aria-label="Voltar ao topo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <!-- JS -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/config.js"></script>
+  <script src="js/particles.js" defer></script>
+  <script src="js/map.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/chat.js" defer></script>
+  <script src="js/script.js" defer></script>
+</body>
+</html>

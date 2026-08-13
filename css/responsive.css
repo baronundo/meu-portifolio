@@ -1,0 +1,206 @@
+/* ==========================================================================
+   RESPONSIVE.CSS
+   Breakpoints: 1240px (container), 1024px, 768px (tablet/menu mobile), 480px
+   ========================================================================== */
+
+/* ------------------------------------------------------------------------
+   DESKTOP PEQUENO / TABLET GRANDE (<= 1024px)
+   ------------------------------------------------------------------------ */
+@media (max-width: 1024px) {
+  section {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .about__content {
+    grid-template-columns: 1fr;
+  }
+
+  .about__image-wrapper {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .contact__map {
+    min-height: 260px;
+  }
+}
+
+/* ------------------------------------------------------------------------
+   TABLET / MOBILE (<= 768px) — MENU MOBILE ENTRA AQUI
+   ------------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  :root {
+    --navbar-height: 68px;
+  }
+
+  .navbar__container {
+    padding: 0 var(--space-sm);
+  }
+
+  .navbar__logo {
+    font-size: 1.05rem;
+  }
+
+  /* --- Navbar / menu (o botão e o painel já são globais; z-index extra no mobile) --- */
+  .navbar__toggle {
+    z-index: 1100;
+  }
+
+  .navbar__links {
+    z-index: 1099;
+    right: var(--space-sm);
+  }
+
+  /* --- Hero --- */
+  .hero__actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .hero__photo-wrapper {
+    width: 120px;
+    height: 120px;
+  }
+
+  /* --- Banner de permissão de localização --- */
+  .geo-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .geo-banner__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .geo-banner__actions .btn {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  /* --- Ícones sociais / indicador de scroll --- */
+  .hero__scroll-indicator {
+    display: none;
+  }
+  .timeline {
+    padding-left: var(--space-md);
+  }
+
+  .timeline__dot {
+    left: calc(-1 * var(--space-md) - 6px);
+  }
+
+  /* --- Estatísticas --- */
+  .stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg) var(--space-md);
+  }
+
+  /* --- Projetos --- */
+  .projects__filters {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.4rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-btn {
+    flex: 0 0 auto;
+  }
+
+  /* --- Rodapé --- */
+  .footer__content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* --- Autenticação na navbar: evita estouro em telas estreitas --- */
+  .navbar__auth {
+    margin-left: 0.4rem;
+  }
+
+  .navbar__user {
+    gap: 0.4rem;
+  }
+
+  .navbar__user-name {
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* --- Cursor personalizado: nunca deve capturar toques no mobile --- */
+  .cursor,
+  .cursor-follower {
+    display: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------------
+   MOBILE PEQUENO (<= 480px)
+   ------------------------------------------------------------------------ */
+@media (max-width: 480px) {
+  .hero__name {
+    font-size: 2.2rem;
+  }
+
+  .hero__actions {
+    max-width: 100%;
+  }
+
+  .stats__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skills__grid,
+  .services__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section__title {
+    font-size: 1.6rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ask-me__messages {
+    height: 280px;
+  }
+
+  .chat-message__bubble {
+    max-width: 90%;
+  }
+
+  .back-to-top {
+    width: 42px;
+    height: 42px;
+    bottom: var(--space-sm);
+    right: var(--space-sm);
+  }
+}
+
+/* ------------------------------------------------------------------------
+   GARANTIA DE ÁREA DE TOQUE (todos os tamanhos até tablet)
+   ------------------------------------------------------------------------ */
+@media (pointer: coarse) {
+  .btn,
+  .filter-btn,
+  .social-icon,
+  .nav-link,
+  .back-to-top {
+    min-height: 44px;
+  }
+
+  /* Segurança extra: em qualquer dispositivo touch, nunca deixar
+     o cursor customizado interceptar toques (mesmo fora do breakpoint 768px) */
+  .cursor,
+  .cursor-follower {
+    display: none !important;
+  }
+}
